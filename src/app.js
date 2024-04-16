@@ -2,16 +2,29 @@ import './prototy-overrides.js'
 
 import express from 'express'
 import logger from 'morgan'
+import cors from 'cors'
+import util from 'util'
 
 import apiRouter from './routes/api.route.js'
 import { ResponseError } from './errors.js'
-import identify from './auth/identify.js'
 
 const app = express()
 
-app.use(logger('dev'))
+logger.token('body', req => {
+	return util.format(req.body)
+})
+
+app.use(logger(':method :url :status :response-time ms - :res[content-length] :body'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
+app.use(
+	cors({
+		credentials: true,
+		exposedHeaders: ['X-Pagination'],
+		origin: ['http://localhost:7895'],
+		methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+	}),
+)
 
 app.use('/api', apiRouter)
 

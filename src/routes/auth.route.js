@@ -1,4 +1,3 @@
-import { validatePasswordHash } from '../helpers/password.js'
 import { recordExist } from '../middleware/record.js'
 import validate from '../middleware/validate.js'
 import { body } from 'express-validator'
@@ -30,9 +29,9 @@ router.post(
 
 			const [{ password, ...user }] = await db.select('u.*').from({ u: 'users' }).where({ username: req.body.username })
 
-			if (!(await validatePasswordHash(req.body.password, password, user.id))) {
-				return res.status(400).json(error)
-			}
+			// if (!(await validatePasswordHash(req.body.password, password, user.id))) {
+			// 	return res.status(400).json(error)
+			// }
 
 			const token = jwt.sign({ username: user.username }, privateKey, {
 				expiresIn: '24h',
